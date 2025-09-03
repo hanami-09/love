@@ -16,13 +16,25 @@ function moveNoBtn() {
   const btnW = noBtn.offsetWidth;
   const btnH = noBtn.offsetHeight;
 
-  // random vị trí trong khoảng an toàn
-  const x = Math.random() * (screenW - btnW - 40) + 20;
-  const y = Math.random() * (screenH - btnH - 40) + 20;
+  const yesRect = yesBtn.getBoundingClientRect(); // lấy vùng của nút Yes
+
+  let x, y;
+  do {
+    x = Math.random() * (screenW - btnW - 40) + 20;
+    y = Math.random() * (screenH - btnH - 40) + 20;
+
+    // kiểm tra có đụng vùng Yes không
+  } while (
+    x + btnW > yesRect.left - 20 &&     // cạnh phải No > cạnh trái Yes
+    x < yesRect.right + 20 &&           // cạnh trái No < cạnh phải Yes
+    y + btnH > yesRect.top - 20 &&      // cạnh dưới No > cạnh trên Yes
+    y < yesRect.bottom + 20             // cạnh trên No < cạnh dưới Yes
+  );
 
   noBtn.style.left = `${x}px`;
   noBtn.style.top = `${y}px`;
 }
+
 
 // Hover (PC) + Click (Mobile) đều làm No chạy
 noBtn.addEventListener("mouseenter", moveNoBtn);
@@ -45,3 +57,32 @@ function createHeart() {
   setTimeout(() => heart.remove(), 6000);
 }
 setInterval(createHeart, 400);
+// Đặt vị trí ban đầu cho nút No né xa nút Yes
+function setInitialNoBtn() {
+  const screenW = window.innerWidth;
+  const screenH = window.innerHeight;
+
+  const btnW = noBtn.offsetWidth;
+  const btnH = noBtn.offsetHeight;
+
+  const yesRect = yesBtn.getBoundingClientRect();
+
+  let x, y;
+  do {
+    x = Math.random() * (screenW - btnW - 40) + 20;
+    y = Math.random() * (screenH - btnH - 40) + 20;
+  } while (
+    x + btnW > yesRect.left - 40 &&   // tránh trùng ngang
+    x < yesRect.right + 40 &&
+    y + btnH > yesRect.top - 40 &&    // tránh trùng dọc
+    y < yesRect.bottom + 40
+  );
+
+  noBtn.style.position = "absolute";
+  noBtn.style.left = `${x}px`;
+  noBtn.style.top = `${y}px`;
+}
+
+// Gọi khi load trang
+window.onload = setInitialNoBtn;
+
